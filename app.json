@@ -1,0 +1,41 @@
+{
+  "expo": {
+    "packagerOpts": {
+      "hostType": "lan"
+    },
+    "name": "my-new-app",
+    "slug": "my-new-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.trongheo2013.mynewapp"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "package": "com.trongheo2013.mynewapp"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "812d56cb-a87f-4eab-a0ef-16b4cd9ba787"
+      }
+    },
+    "plugins": [
+      "expo-secure-store"
+    ]
+  }
+}
