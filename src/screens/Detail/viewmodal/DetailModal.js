@@ -1,6 +1,7 @@
 import { useNavigation } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import { detailaccommodation } from "../../../api/app/app";
+import dayjs from "dayjs";
 
 const DetailModal = ({ id, date }) => {
   const navigation = useNavigation();
@@ -64,23 +65,26 @@ const DetailModal = ({ id, date }) => {
   };
 
   const handleDateSelection = (fromDate, toDate) => {
-    setSelectedDate({ fromDate, toDate });
+    const formattedFromDate = dayjs(fromDate).format("DD/MM/YYYY");
+    const formattedToDate = dayjs(toDate).format("DD/MM/YYYY");
+    setSelectedDate({ formattedFromDate, formattedToDate });
     setShowDateModal(false);
     // Điều hướng ngay sau khi chọn ngày
     if (detailData?.type === 0) {
       navigation.navigate("ListRoom", {
         hotelId: detailData?.id,
-        date: { fromDate, toDate },
+        date: { fromDate: formattedFromDate, toDate: formattedToDate },
         user: detailData?.user,
       });
     } else {
       navigation.navigate("Payment", {
         hotelId: detailData?.id,
-        date: { fromDate, toDate },
+        date: { fromDate: formattedFromDate, toDate: formattedToDate },
         user: detailData?.user,
       });
     }
   };
+
   return {
     loading,
     detailData,

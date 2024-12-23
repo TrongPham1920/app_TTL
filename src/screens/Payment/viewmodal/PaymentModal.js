@@ -5,6 +5,7 @@ import { useAuth } from "../../../global/context/AuthenticationContext";
 import { useNavigation } from "@react-navigation/native";
 import * as FileSystem from "expo-file-system";
 import * as MediaLibrary from "expo-media-library";
+import { createOder } from "../../../api/app/app.js";
 
 const usePaymentModal = ({ route }) => {
   const { profile } = useAuth();
@@ -17,7 +18,6 @@ const usePaymentModal = ({ route }) => {
 
   const [qr, setQr] = useState("");
   const [guestName, setGuestName] = useState("");
-  const [guestEmail, setGuestEmail] = useState("");
   const [guestPhone, setGuestPhone] = useState("");
 
   const { fromDate, toDate } = date || [];
@@ -41,35 +41,40 @@ const usePaymentModal = ({ route }) => {
             text2: "Không thể tải ảnh QR",
           });
         });
+      setGuestPhone("");
+      setGuestName("");
     }
   }, [route.params]);
 
-  const handleConfirm = async () => {
+  const handleCcheck = async () => {
     if (!profile && (!guestName || !guestPhone || !guestEmail)) {
       setIsModalVisible(true);
       return;
+    } else {
+      handleConfirm();
     }
+  };
 
+  const handleConfirm = async () => {
     try {
+      setLoading(false);
+
       const values = profile
         ? {
             userId: profile?.id,
             accommodationId: +hotelId,
-            roomId: selectedKey,
+            ...(selectedKey && { roomId: selectedKey }),
             checkInDate: checkInDate,
             checkOutDate: checkOutDate,
           }
         : {
             guestName: guestName,
-            guestEmail: guestEmail,
             guestPhone: guestPhone,
             accommodationId: +hotelId,
-            roomId: selectedKey,
+            ...(selectedKey && { roomId: selectedKey }),
             checkInDate: checkInDate,
             checkOutDate: checkOutDate,
           };
-
-      setLoading(true);
 
       const response = await createOder(values);
 
@@ -78,8 +83,10 @@ const usePaymentModal = ({ route }) => {
           type: "success",
           position: "top",
           text1: response?.mess,
-          text2: "Kiểm tra hộp thư của bạn để nhận mã.",
+          text2: "Bạn đã đặt phòng thành công",
         });
+        setGuestPhone("");
+        setGuestName("");
         navigation.navigate("Home");
       } else {
         Toast.show({
@@ -90,14 +97,15 @@ const usePaymentModal = ({ route }) => {
         });
       }
     } catch (error) {
+      console.log(error);
       Toast.show({
         type: "error",
         position: "top",
-        text1: "Đặt phòng thất bại!!",
-        text2: "Đã xảy ra lỗi, vui lòng thử lại.",
+        text1: "Đặt phòng thất bại!!!",
+        text2: "Đã xảy ra lỗi, vui lòng thử lại!!!",
       });
     } finally {
-      setLoading(false);
+      setLoading(true);
     }
   };
 
@@ -155,17 +163,16 @@ const usePaymentModal = ({ route }) => {
   return {
     qr,
     guestName,
-    guestEmail,
     guestPhone,
     isModalVisible,
     loading,
     isImageLoading,
     setIsImageLoading,
     handleConfirm,
+    handleCcheck,
     handleCancel,
     setIsModalVisible,
     setGuestPhone,
-    setGuestEmail,
     setGuestName,
     handleDownloadImage,
   };

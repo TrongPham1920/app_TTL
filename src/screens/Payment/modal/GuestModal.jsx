@@ -1,5 +1,12 @@
 import React from "react";
-import { Modal, StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import {
+  Modal,
+  StyleSheet,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import Toast from "react-native-toast-message";
 
 const GuestModal = ({
@@ -8,13 +15,11 @@ const GuestModal = ({
   onConfirm,
   guestName,
   setGuestName,
-  guestEmail,
-  setGuestEmail,
   guestPhone,
   setGuestPhone,
 }) => {
   const handleConfirm = () => {
-    if (!guestName || !guestPhone || !guestEmail) {
+    if (!guestName || !guestPhone) {
       Toast.show({
         type: "error",
         position: "top",
@@ -23,6 +28,18 @@ const GuestModal = ({
       });
       return;
     }
+
+    const phoneRegex = /^(0\d{9}|\d{10,11})$/;
+    if (!phoneRegex.test(guestPhone)) {
+      Toast.show({
+        type: "error",
+        position: "top",
+        text1: "Số điện thoại không hợp lệ",
+        text2: "Vui lòng nhập số điện thoại có 10 hoặc 11 chữ số.",
+      });
+      return;
+    }
+
     onConfirm();
   };
 
@@ -49,13 +66,6 @@ const GuestModal = ({
             value={guestPhone}
             onChangeText={setGuestPhone}
             keyboardType="phone-pad"
-          />
-          <TextInput
-            style={styles.input}
-            placeholder="Email"
-            value={guestEmail}
-            onChangeText={setGuestEmail}
-            keyboardType="email-address"
           />
 
           <View style={styles.modalButtonContainer}>

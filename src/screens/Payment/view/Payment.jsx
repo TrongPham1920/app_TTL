@@ -11,7 +11,6 @@ const Payment = () => {
   const {
     qr,
     guestName,
-    guestEmail,
     guestPhone,
     isModalVisible,
     loading,
@@ -21,9 +20,9 @@ const Payment = () => {
     handleCancel,
     setIsModalVisible,
     setGuestPhone,
-    setGuestEmail,
     setGuestName,
     handleDownloadImage,
+    handleCcheck,
   } = usePaymentModal({ route });
 
   if (!loading) {
@@ -51,7 +50,7 @@ const Payment = () => {
       <View style={styles.buttonContainer}>
         <TouchableOpacity
           style={[styles.button, styles.confirmButton]}
-          onPress={handleConfirm}
+          onPress={handleCcheck}
         >
           <Text style={styles.buttonText}>Xác nhận</Text>
         </TouchableOpacity>
@@ -71,8 +70,6 @@ const Payment = () => {
         onClose={() => setIsModalVisible(false)}
         guestName={guestName}
         setGuestName={setGuestName}
-        guestEmail={guestEmail}
-        setGuestEmail={setGuestEmail}
         guestPhone={guestPhone}
         setGuestPhone={setGuestPhone}
         onConfirm={() => {
