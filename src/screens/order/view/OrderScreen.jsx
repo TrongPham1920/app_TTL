@@ -1,5 +1,9 @@
 import React from "react";
+<<<<<<< HEAD
 import { StyleSheet, View, Text, Image } from "react-native";
+=======
+import { StyleSheet, View } from "react-native";
+>>>>>>> main
 import OrderList from "../../../components/foundation/list/OrderList";
 import useHotModal from "../viewmodal/OrderModal";
 
@@ -8,6 +12,7 @@ const OrderScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
+<<<<<<< HEAD
       {accommodationData && accommodationData.length > 0 ? (
         <OrderList
           loading={loading}
@@ -23,6 +28,13 @@ const OrderScreen = ({ navigation }) => {
           />
         </View>
       )}
+=======
+      <OrderList
+        loading={loading}
+        data={accommodationData}
+        navigation={navigation}
+      />
+>>>>>>> main
     </View>
   );
 };
@@ -32,6 +44,7 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 0,
   },
+<<<<<<< HEAD
   noDataContainer: {
     flex: 1,
     justifyContent: "center",
@@ -46,6 +59,8 @@ const styles = StyleSheet.create({
     height: 300, 
     resizeMode: "contain", 
   },
+=======
+>>>>>>> main
 });
 
 export default OrderScreen;
