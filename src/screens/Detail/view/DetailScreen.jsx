@@ -1,7 +1,7 @@
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { useRoute } from "@react-navigation/native";
 import { LinearGradient } from "expo-linear-gradient";
-import React, { useEffect } from "react";
+import React, { useState } from "react";
 import {
   ActivityIndicator,
   ScrollView,
@@ -9,12 +9,14 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Modal,
 } from "react-native";
 import FormatUtils from "../../../../utils/format/Format";
 import SimpleCarousel from "../../../components/foundation/image/Carousel";
 import LocationMapWithThumbnail from "../../../components/foundation/map/LocaltionMapThumbnail";
 import DetailModal from "../viewmodal/DetailModal";
-
+import DateInput from "../../../components/foundation/date/Date";
+import Toast from "react-native-toast-message";
 const tagColors = [
   "#F2D5DA",
   "#BFBFE3",
@@ -44,22 +46,29 @@ const Stars = ({ num }) => {
 const DetailView = () => {
   const route = useRoute();
   const { id, date } = route.params;
-
   const {
     loading,
     detailData,
     isDescriptionLong,
-    setDetailData,
-    setLoading,
+    showDateModal,
+    setShowDateModal,
     goToRoomList,
-    fetchData,
+    setSelectedDate,
+    handleDateSelection,
     handleToggleDescription,
   } = DetailModal({ id, date });
- 
 
-  if(!date){
-    console.log("non")
-  }
+  const [fromDate, setFromDate] = useState(() => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return tomorrow;
+  });
+
+  const [toDate, setToDate] = useState(() => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 2);
+    return tomorrow;
+  });
 
   if (loading) {
     return (
@@ -73,6 +82,73 @@ const DetailView = () => {
 
   return (
     <View style={styles.container}>
+      {/* Modal chọn ngày */}
+      <Modal visible={showDateModal} animationType="slide" transparent={true}>
+        <View style={styles.modalContainer}>
+          <View style={styles.datePickerContainer}>
+            <Text style={styles.modalTitle}>Chọn thời gian nhận/trả phòng</Text>
+            <View style={styles.inputWrapper}>
+              <DateInput
+                label="Ngày nhận phòng"
+                date={fromDate}
+                onDateChange={setFromDate}
+              />
+            </View>
+
+            <View style={styles.inputWrapper}>
+              <DateInput
+                label="Ngày trả phòng"
+                date={toDate}
+                onDateChange={setToDate}
+              />
+            </View>
+            <View style={styles.button}>
+              <TouchableOpacity
+                style={styles.confirmButton}
+                onPress={() => {
+                  const today = new Date();
+                  today.setHours(0, 0, 0, 0);
+
+                  if (!fromDate || !toDate) {
+                    Toast.show({
+                      position: "top",
+                      type: "error",
+                      text1: "Lỗi chọn ngày",
+                      text2: "Vui lòng chọn ngày nhận phòng và ngày trả phòng!",
+                    });
+                  } else if (fromDate < today) {
+                    Toast.show({
+                      type: "error",
+                      text1: "Lỗi chọn ngày",
+                      text2: "Ngày nhận phòng không được nhỏ hơn hôm nay!",
+                    });
+                  } else if (toDate <= fromDate) {
+                    Toast.show({
+                      type: "error",
+                      text1: "Lỗi chọn ngày",
+                      text2: "Ngày trả phòng phải lớn hơn ngày nhận phòng!",
+                    });
+                  } else {
+                    handleDateSelection(fromDate, toDate);
+                  }
+                }}
+              >
+                <Text style={styles.confirmButtonText}>Xác nhận</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.cancelButton}
+                onPress={() => {
+                  setShowDateModal(false);
+                  setSelectedDate({ fromDate: null, toDate: null });
+                }}
+              >
+                <Text style={styles.confirmButtonText}>Hủy</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
       <ScrollView style={styles.scrollcontainer}>
         <View style={styles.header}>
           <Text style={styles.title}>{detailData?.name?.toUpperCase()}</Text>
@@ -191,15 +267,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: "#1261A6",
   },
-  imageGallery: {
-    marginVertical: 8,
-  },
-  image: {
-    width: 250,
-    height: 200,
-    marginRight: 8,
-    overflow: "hidden",
-  },
   sectionTitle: {
     fontSize: 16,
     fontWeight: "bold",
@@ -280,6 +347,52 @@ const styles = StyleSheet.create({
     alignItems: "center",
     fontWeight: "600",
     fontSize: 18,
+  },
+  modalContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  datePickerContainer: {
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 10,
+    width: "100%",
+    alignItems: "center",
+  },
+  modalTitle: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 20,
+  },
+  button: {
+    flexDirection: "row",
+  },
+  confirmButton: {
+    textAlign: "center",
+    width: 80,
+    marginTop: 20,
+    marginRight: 10,
+    padding: 10,
+    backgroundColor: "#33539E",
+    borderRadius: 5,
+  },
+  confirmButtonText: {
+    textAlign: "center",
+    color: "white",
+    fontWeight: "bold",
+  },
+  cancelButton: {
+    width: 80,
+    marginTop: 20,
+    padding: 10,
+    backgroundColor: "#8B0000",
+    borderRadius: 5,
+  },
+  inputWrapper: {
+    width: "80%",
+    marginBottom: 5,
   },
 });
 
