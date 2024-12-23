@@ -1,8 +1,8 @@
+import { useNavigation, useRoute } from "@react-navigation/native";
+import dayjs from "dayjs";
 import React, { useEffect, useState } from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Toast from "react-native-toast-message";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import dayjs from "dayjs";
 import { createOder } from "../../../api/app/app";
 import { useAuth } from "../../../global/context/AuthenticationContext";
 import GuestModal from "../modal/GuestModal";
@@ -12,17 +12,20 @@ const Payment = () => {
   const route = useRoute();
   const navigation = useNavigation();
   const { hotelId, selectedKey, date, user } = route.params;
+
   const { profile } = useAuth();
   const [qr, setQr] = useState("");
+
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [isQrModalVisible, setIsQrModalVisible] = useState(false);
+
   const [guestName, setGuestName] = useState("");
   const [guestEmail, setGuestEmail] = useState("");
   const [guestPhone, setGuestPhone] = useState("");
 
   const { fromDate, toDate } = date || [];
-  const checkInDate = fromDate ? dayjs(fromDate).format("DD/MM/YYYY") : null;
-  const checkOutDate = toDate ? dayjs(toDate).format("DD/MM/YYYY") : null;
+  const checkInDate = fromDate;
+  const checkOutDate = toDate;
 
   useEffect(() => {
     setQr(
@@ -99,15 +102,11 @@ const Payment = () => {
       </TouchableOpacity>
 
       <View style={styles.transparentButtonContainer}>
-        <TouchableOpacity
-          style={[styles.button, styles.transparentButton]}
-        >
+        <TouchableOpacity style={[styles.button, styles.transparentButton]}>
           <Text style={styles.transparentButtonText}>Tải lại mã QR</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity
-          style={[styles.button, styles.transparentButton]}
-        >
+        <TouchableOpacity style={[styles.button, styles.transparentButton]}>
           <Text style={styles.transparentButtonText}>Lưu mã QR về máy</Text>
         </TouchableOpacity>
       </View>
@@ -196,7 +195,7 @@ const styles = StyleSheet.create({
     color: "black",
     fontSize: 16,
     fontWeight: "600",
-    textAlign:"center"
+    textAlign: "center",
   },
   buttonContainer: {
     marginTop: 20,

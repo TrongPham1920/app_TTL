@@ -7,6 +7,7 @@ import { Button, StyleSheet, Text, TextInput, View } from "react-native";
 import { Card } from "react-native-elements";
 import DateInput from "../../../components/foundation/date/Date";
 import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
+import dayjs from "dayjs";
 
 const SearchScreen = () => {
   const navigation = useNavigation();
@@ -27,7 +28,16 @@ const SearchScreen = () => {
   });
 
   const onOk = () => {
-    navigation.navigate("Find", { people, numBed, fromDate, toDate, province });
+    const formattedFromDate = dayjs(fromDate).format("DD/MM/YYYY");
+    const formattedToDate = dayjs(toDate).format("DD/MM/YYYY");
+
+    navigation.navigate("Find", {
+      people,
+      numBed,
+      fromDate: formattedFromDate,
+      toDate: formattedToDate,
+      province,
+    });
   };
 
   return (
