@@ -1,9 +1,5 @@
 import React from "react";
-<<<<<<< HEAD
 import { StyleSheet, View, Text, Image } from "react-native";
-=======
-import { StyleSheet, View } from "react-native";
->>>>>>> main
 import OrderList from "../../../components/foundation/list/OrderList";
 import useHotModal from "../viewmodal/OrderModal";
 
@@ -12,7 +8,6 @@ const OrderScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-<<<<<<< HEAD
       {accommodationData && accommodationData.length > 0 ? (
         <OrderList
           loading={loading}
@@ -23,18 +18,11 @@ const OrderScreen = ({ navigation }) => {
         <View style={styles.noDataContainer}>
           <Text style={styles.noDataText}>Chưa có đơn</Text>
           <Image
-            source={require("../../../../assets/NoOrder.png")} 
+            source={require("../../../../assets/NoOrder.png")}
             style={styles.noDataImage}
           />
         </View>
       )}
-=======
-      <OrderList
-        loading={loading}
-        data={accommodationData}
-        navigation={navigation}
-      />
->>>>>>> main
     </View>
   );
 };
@@ -44,7 +32,6 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 0,
   },
-<<<<<<< HEAD
   noDataContainer: {
     flex: 1,
     justifyContent: "center",
@@ -52,15 +39,13 @@ const styles = StyleSheet.create({
   },
   noDataText: {
     fontSize: 16,
-    color: "#888", 
+    color: "#888",
   },
   noDataImage: {
-    width: 300, 
-    height: 300, 
-    resizeMode: "contain", 
+    width: 300,
+    height: 300,
+    resizeMode: "contain",
   },
-=======
->>>>>>> main
 });
 
 export default OrderScreen;
