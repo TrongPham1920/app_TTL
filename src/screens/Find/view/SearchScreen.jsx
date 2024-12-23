@@ -1,12 +1,13 @@
+import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import { useNavigation } from "@react-navigation/native";
+import dayjs from "dayjs";
 import { LinearGradient } from "expo-linear-gradient";
 import React, { useState } from "react";
 import { Button, StyleSheet, Text, TextInput, View } from "react-native";
 import { Card } from "react-native-elements";
 import DateInput from "../../../components/foundation/date/Date";
-import FontAwesome6 from "@expo/vector-icons/FontAwesome6";
 
 const SearchScreen = () => {
   const navigation = useNavigation();
@@ -27,7 +28,16 @@ const SearchScreen = () => {
   });
 
   const onOk = () => {
-    navigation.navigate("Find", { people, numBed, fromDate, toDate, province });
+    const formattedFromDate = dayjs(fromDate).format("DD/MM/YYYY");
+    const formattedToDate = dayjs(toDate).format("DD/MM/YYYY");
+
+    navigation.navigate("Find", {
+      people,
+      numBed,
+      fromDate: formattedFromDate,
+      toDate: formattedToDate,
+      province,
+    });
   };
 
   return (
