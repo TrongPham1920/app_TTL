@@ -1,114 +1,51 @@
-import { useNavigation, useRoute } from "@react-navigation/native";
-import dayjs from "dayjs";
-import React, { useEffect, useState } from "react";
+import { useRoute } from "@react-navigation/native";
+import React from "react";
 import { Image, StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import Toast from "react-native-toast-message";
-import { createOder } from "../../../api/app/app";
-import { useAuth } from "../../../global/context/AuthenticationContext";
 import GuestModal from "../modal/GuestModal";
-import QRModal from "../modal/QRModal";
+import usePaymentModal from "../viewmodal/PaymentModal";
+import Loading from "../../../components/foundation/loading/Loading";
+import Feather from "@expo/vector-icons/Feather";
 
 const Payment = () => {
   const route = useRoute();
-  const navigation = useNavigation();
-  const { hotelId, selectedKey, date, user } = route.params;
+  const {
+    qr,
+    guestName,
+    guestEmail,
+    guestPhone,
+    isModalVisible,
+    loading,
+    isImageLoading,
+    setIsImageLoading,
+    handleConfirm,
+    handleCancel,
+    setIsModalVisible,
+    setGuestPhone,
+    setGuestEmail,
+    setGuestName,
+    handleDownloadImage,
+  } = usePaymentModal({ route });
 
-  const { profile } = useAuth();
-  const [qr, setQr] = useState("");
-
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [isQrModalVisible, setIsQrModalVisible] = useState(false);
-
-  const [guestName, setGuestName] = useState("");
-  const [guestEmail, setGuestEmail] = useState("");
-  const [guestPhone, setGuestPhone] = useState("");
-
-  const { fromDate, toDate } = date || [];
-  const checkInDate = fromDate;
-  const checkOutDate = toDate;
-
-  useEffect(() => {
-    setQr(
-      `https://img.vietqr.io/image/${user?.bankShortName}-${user?.accountNumber}-compact.jpg?amount=100000&addInfo=Chuyen khoan dat phong - ${hotelId}`
-    );
-  }, [hotelId, selectedKey, date, user, profile]);
-
-  const handleConfirm = async () => {
-    if (!profile && (!guestName || !guestPhone || !guestEmail)) {
-      setIsModalVisible(true);
-      return;
-    }
-
-    try {
-      const values = profile
-        ? {
-            userId: profile?.id,
-            accommodationId: +hotelId,
-            roomId: selectedKey,
-            checkInDate: checkInDate,
-            checkOutDate: checkOutDate,
-          }
-        : {
-            guestName: guestName,
-            guestEmail: guestEmail,
-            guestPhone: guestPhone,
-            accommodationId: +hotelId,
-            roomId: selectedKey,
-            checkInDate: checkInDate,
-            checkOutDate: checkOutDate,
-          };
-
-      const response = await createOder(values);
-
-      if (response?.code === 1) {
-        Toast.show({
-          type: "success",
-          position: "top",
-          text1: response?.mess,
-          text2: "Kiểm tra hộp thư của bạn để nhận mã.",
-        });
-        navigation.navigate("Home");
-      } else {
-        Toast.show({
-          type: "error",
-          position: "top",
-          text1: "Đặt phòng thất bại!!",
-          text2: response?.mess || "Đã xảy ra lỗi.",
-        });
-      }
-    } catch (error) {
-      Toast.show({
-        type: "error",
-        position: "top",
-        text1: "Đặt phòng thất bại!!",
-        text2: "Đã xảy ra lỗi, vui lòng thử lại.",
-      });
-    }
-  };
-
-  const handleCancel = () => {
-    navigation.goBack();
-  };
+  if (!loading) {
+    return <Loading />;
+  }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.qrText}>Quét mã QR để được xác nhận nhanh hơn</Text>
-
       <TouchableOpacity
-        onPress={() => setIsQrModalVisible(true)}
-        style={styles.qrTouchable}
+        style={[styles.downloadButton]}
+        onPress={handleDownloadImage}
       >
-        <Image source={{ uri: qr }} style={styles.qrImage} />
+        <Feather name="download" size={22} color="black" />
       </TouchableOpacity>
 
-      <View style={styles.transparentButtonContainer}>
-        <TouchableOpacity style={[styles.button, styles.transparentButton]}>
-          <Text style={styles.transparentButtonText}>Tải lại mã QR</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={[styles.button, styles.transparentButton]}>
-          <Text style={styles.transparentButtonText}>Lưu mã QR về máy</Text>
-        </TouchableOpacity>
+      <View style={styles.qrTouchable}>
+        <Image
+          source={{ uri: qr }}
+          style={styles.qrImage}
+          onLoad={() => setIsImageLoading(false)}
+          onError={() => setIsImageLoading(false)}
+        />
       </View>
 
       <View style={styles.buttonContainer}>
@@ -127,6 +64,8 @@ const Payment = () => {
         </TouchableOpacity>
       </View>
 
+      <Text style={styles.qrText2}>Quét mã QR để được xác nhận nhanh hơn</Text>
+
       <GuestModal
         isVisible={isModalVisible}
         onClose={() => setIsModalVisible(false)}
@@ -141,12 +80,6 @@ const Payment = () => {
           handleConfirm();
         }}
       />
-
-      <QRModal
-        visible={isQrModalVisible}
-        qrCode={qr}
-        onClose={() => setIsQrModalVisible(false)}
-      />
     </View>
   );
 };
@@ -158,11 +91,18 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
-  qrText: {
-    fontSize: 18,
-    fontWeight: "500",
-    marginBottom: 20,
-    textAlign: "center",
+  downloadButton: {
+    position: "absolute",
+    top: 20,
+    right: 20,
+    backgroundColor: "transparent",
+    borderWidth: 1,
+    borderColor: "gray",
+    borderRadius: 8,
+    padding: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 10,
   },
   qrTouchable: {
     justifyContent: "center",
@@ -171,34 +111,14 @@ const styles = StyleSheet.create({
     height: 400,
   },
   qrImage: {
-    width: 400,
-    height: 400,
+    width: 500,
+    height: 450,
     resizeMode: "contain",
     borderRadius: 10,
   },
-  transparentButtonContainer: {
-    marginTop: 20,
-    width: "80%",
-    flexDirection: "row",
-    justifyContent: "space-between",
-  },
-  transparentButton: {
-    borderWidth: 1,
-    borderColor: "black",
-    backgroundColor: "transparent",
-    borderRadius: 8,
-    justifyContent: "center",
-    alignItems: "center",
-    flex: 1,
-  },
-  transparentButtonText: {
-    color: "black",
-    fontSize: 16,
-    fontWeight: "600",
-    textAlign: "center",
-  },
   buttonContainer: {
-    marginTop: 20,
+    marginTop: 30,
+    marginBottom: 10,
     width: "80%",
     flexDirection: "row",
     justifyContent: "space-between",
@@ -221,6 +141,13 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontWeight: "600",
+  },
+  qrText2: {
+    fontSize: 14,
+    fontWeight: "500",
+    marginBottom: 10,
+    textAlign: "center",
+    color: "gray",
   },
 });
 
