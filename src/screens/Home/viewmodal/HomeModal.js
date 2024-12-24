@@ -1,5 +1,11 @@
 import { useState, useEffect } from "react";
 import { accommodationuser } from "../../../api/app/app.js";
+import dayjs from "dayjs";
+
+const currentDate = dayjs().add(1, "day");
+const defaultStartDate = currentDate.add(1, "day");
+const StartDate = defaultStartDate.format("DD/MM/YYYY");
+const date = currentDate.format("DD/MM/YYYY");
 
 const useHotModal = () => {
   const [list, setList] = useState([]);
@@ -13,25 +19,33 @@ const useHotModal = () => {
   const [villaLoading, setVillaLoading] = useState(true);
 
   const [page, setPage] = useState(0);
-  const [pageSize, setPageSize] = useState(20);
+  const [pageSize, setPageSize] = useState(10);
 
   const [filterParams, setFilterParams] = useState({
     page: page,
     limit: pageSize,
+    fromDate: date,
+    toDate: StartDate,
   });
 
   const [hotelParams, setHotelParams] = useState({
     limit: pageSize,
+    fromDate: date,
+    toDate: StartDate,
     type: 0,
   });
 
   const [homestayParams, setHomestayParams] = useState({
     limit: pageSize,
+    fromDate: date,
+    toDate: StartDate,
     type: 1,
   });
 
   const [villaParams, setVillaParams] = useState({
     limit: pageSize,
+    fromDate: date,
+    toDate: StartDate,
     type: 2,
   });
 
@@ -99,6 +113,8 @@ const useHotModal = () => {
   }, [filterParams, hotelParams, homestayParams, villaParams]);
 
   return {
+    date,
+    StartDate,
     list,
     generalLoading,
     villa,

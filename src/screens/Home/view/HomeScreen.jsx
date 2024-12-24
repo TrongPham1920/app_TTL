@@ -16,6 +16,8 @@ import { useNavigation } from "@react-navigation/native";
 const HomeScreen = () => {
   const navigation = useNavigation();
   const {
+    date,
+    StartDate,
     list,
     generalLoading,
     villa,
@@ -33,7 +35,11 @@ const HomeScreen = () => {
           <TouchableOpacity
             style={styles.box}
             onPress={() => {
-              navigation.navigate("Find", { type: 0 });
+              navigation.navigate("Find", {
+                type: 0,
+                fromDate: date,
+                toDate: StartDate,
+              });
             }}
           >
             <Image
@@ -48,7 +54,11 @@ const HomeScreen = () => {
           <TouchableOpacity
             style={styles.box}
             onPress={() => {
-              navigation.navigate("Find", { type: 2 });
+              navigation.navigate("Find", {
+                type: 2,
+                fromDate: date,
+                toDate: StartDate,
+              });
             }}
           >
             <Image
@@ -63,7 +73,11 @@ const HomeScreen = () => {
           <TouchableOpacity
             style={styles.box}
             onPress={() => {
-              navigation.navigate("Find", { type: 2 });
+              navigation.navigate("Find", {
+                type: 1,
+                fromDate: date,
+                toDate: StartDate,
+              });
             }}
           >
             <Image
@@ -85,7 +99,11 @@ const HomeScreen = () => {
           <TouchableOpacity
             style={styles.box_img}
             onPress={() => {
-              navigation.navigate("Find", { province: "Hồ Chí Minh" });
+              navigation.navigate("Find", {
+                province: "Hồ Chí Minh",
+                fromDate: date,
+                toDate: StartDate,
+              });
             }}
           >
             <Image
@@ -100,7 +118,11 @@ const HomeScreen = () => {
           <TouchableOpacity
             style={styles.box_img}
             onPress={() => {
-              navigation.navigate("Find", { province: "Đà Nẵng" });
+              navigation.navigate("Find", {
+                province: "Đà Nẵng",
+                fromDate: date,
+                toDate: StartDate,
+              });
             }}
           >
             <Image
@@ -117,7 +139,11 @@ const HomeScreen = () => {
           <TouchableOpacity
             style={styles.box_img}
             onPress={() => {
-              navigation.navigate("Find", { province: "Đà Lạt" });
+              navigation.navigate("Find", {
+                province: "Đà Lạt",
+                fromDate: date,
+                toDate: StartDate,
+              });
             }}
           >
             <Image
@@ -132,7 +158,11 @@ const HomeScreen = () => {
           <TouchableOpacity
             style={styles.box_img}
             onPress={() => {
-              navigation.navigate("Find", { province: "Vũng Tàu" });
+              navigation.navigate("Find", {
+                province: "Vũng Tàu",
+                fromDate: date,
+                toDate: StartDate,
+              });
             }}
           >
             <Image
@@ -160,6 +190,7 @@ const HomeScreen = () => {
           }
           type={-1}
           data={list}
+          date={{ fromDate: date, toDate: StartDate }}
           loading={generalLoading}
         />
 
@@ -173,6 +204,7 @@ const HomeScreen = () => {
           }
           type={0}
           data={hotels}
+          date={{ fromDate: date, toDate: StartDate }}
           loading={hotelLoading}
         />
 
@@ -186,6 +218,7 @@ const HomeScreen = () => {
           }
           type={1}
           data={homestay}
+          date={{ fromDate: date, toDate: StartDate }}
           loading={homestayLoading}
         />
 
@@ -199,6 +232,7 @@ const HomeScreen = () => {
           }
           type={2}
           data={villa}
+          date={{ fromDate: date, toDate: StartDate }}
           loading={villaLoading}
         />
       </ScrollView>

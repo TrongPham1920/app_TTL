@@ -11,7 +11,7 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import Loading from "../../../components/foundation/loading/Loading";
 import { useNavigation } from "@react-navigation/native";
 
-const HorizontalList = ({ title, data, loading, type }) => {
+const HorizontalList = ({ title, data, date, loading, type }) => {
   const navigation = useNavigation();
 
   const dataWithSeeMore = [
@@ -27,9 +27,15 @@ const HorizontalList = ({ title, data, loading, type }) => {
             style={styles.seeMoreButton}
             onPress={() => {
               if (type === -1) {
-                navigation.navigate("Hot");
+                navigation.navigate("Hot", {
+                  fromDate: date?.fromDate,
+                  toDate: date?.toDate,
+                });
               } else {
-                navigation.navigate("Find", { type: type });
+                navigation.navigate("Find", {
+                  fromDate: date?.fromDate,
+                  toDate: date?.toDate,
+                });
               }
             }}
           >
@@ -43,7 +49,9 @@ const HorizontalList = ({ title, data, loading, type }) => {
     return (
       <SmallCard
         accommodation={item}
-        onPress={() => navigation.navigate("Detail", { id: item.id })}
+        onPress={() =>
+          navigation.navigate("Detail", { id: item.id, date: date })
+        }
       />
     );
   };
