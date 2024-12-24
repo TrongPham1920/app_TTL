@@ -49,6 +49,7 @@ const FindModal = ({ route }) => {
 
   const handleSearch = () => {
     const trimmedValue = inputValue.trim();
+
     if (trimmedValue) {
       const updatedParams = {
         limit: 20,
@@ -63,9 +64,10 @@ const FindModal = ({ route }) => {
       const updatedParams = {
         limit: 20,
         page: 0,
-        formDate: fromDate,
+        fromDate: fromDate,
         toDate: toDate,
       };
+
       fetchData(updatedParams);
     }
   };
