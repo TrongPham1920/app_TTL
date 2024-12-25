@@ -1,18 +1,18 @@
-import React, { useEffect, useState } from "react";
+import { useRoute } from "@react-navigation/native";
+import React from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
+  ActivityIndicator,
   FlatList,
   Image,
+  StyleSheet,
+  Text,
   TouchableOpacity,
-  ActivityIndicator,
+  View,
 } from "react-native";
 import { CheckBox } from "react-native-elements";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import { getroom } from "../../../api/app/app";
-import FormatUtils from "../../../../utils/format/Format";
 import Icon from "react-native-vector-icons/FontAwesome";
+import FormatUtils from "../../../../utils/format/Format";
+import useListRoomModal from "../viewmodal/ListRoomModal";
 
 const getRoomType = (type) => {
   switch (type) {
@@ -31,62 +31,16 @@ const getRoomType = (type) => {
 
 const ListRoomView = () => {
   const route = useRoute();
-  const navigation = useNavigation();
-  const { hotelId, date, user } = route.params;
-
-  const [list, setList] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [selectedRooms, setSelectedRooms] = useState([]);
-  const [selectedKey, setSelectedKey] = useState([]);
-
-  const handleRoomPress = (roomId) => {
-    navigation.navigate("RoomDetail", { roomId });
-  };
-
-  const handleCheckboxChange = (roomId, price) => {
-    setSelectedRooms((prev) => {
-      const existingRoom = prev.find((room) => room.id === roomId);
-      if (existingRoom) {
-        return prev.filter((room) => room.id !== roomId);
-      } else {
-        return [...prev, { id: roomId, price }];
-      }
-    });
-    setSelectedKey((prev) => {
-      if (prev.includes(roomId)) {
-        return prev.filter((id) => id !== roomId);
-      } else {
-        return [...prev, roomId];
-      }
-    });
-  };
-
-  const calculateTotalPrice = () => {
-    return selectedRooms.reduce((total, room) => total + room?.price, 0);
-  };
-
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      const response = await getroom({ accommodationId: hotelId });
-      if (response?.data) {
-        setList(response.data);
-      }
-    } catch (error) {
-      console.error("Lỗi khi lấy dữ liệu room: ", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleBookNow = () => {
-    navigation.navigate("Payment", { hotelId, selectedKey, date, user });
-  };
-
-  useEffect(() => {
-    setSelectedRooms([]);
-    fetchData();
-  }, [hotelId]);
+  const {
+    list,
+    selectedKey,
+    selectedRooms,
+    loading,
+    handleBookNow,
+    calculateTotalPrice,
+    handleCheckboxChange,
+    handleRoomPress,
+  } = useListRoomModal({ route });
 
   if (loading) {
     return (
