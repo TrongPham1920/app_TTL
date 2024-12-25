@@ -9,6 +9,7 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Modal,
 } from "react-native";
 import { CheckBox } from "react-native-elements";
 import Icon from "react-native-vector-icons/FontAwesome";
@@ -45,6 +46,8 @@ const ListRoomView = () => {
     calculateTotalPrice,
     handleCheckboxChange,
     handleRoomPress,
+    handleCloseDateModal,
+    handleOpenDateModal,
   } = useListRoomModal({ route });
 
   if (loading) {
@@ -62,8 +65,8 @@ const ListRoomView = () => {
           title={`${date?.fromDate} -- ${date?.toDate} `}
           content="Ngày bạn chọn không khả dụng hãy chọn ngày khác"
           button={{
-            label: "Thử lại",
-            onPress: () => alert("Button được nhấn!"),
+            label: "Chọn ngày",
+            onPress: handleOpenDateModal,
           }}
         />
       </>
@@ -147,6 +150,20 @@ const ListRoomView = () => {
           <Text style={styles.bookNowText}>Đặt ngay</Text>
         </TouchableOpacity>
       </View>
+
+      {showDateModal && (
+        <Modal
+          visible={showDateModal}
+          animationType="slide"
+          transparent={true}
+          onRequestClose={handleCloseDateModal}
+        >
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Chọn ngày</Text>
+            <Button title="Đóng" onPress={handleCloseDateModal} />
+          </View>
+        </Modal>
+      )}
     </View>
   );
 };
@@ -267,6 +284,17 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
+  },
+  modalContent: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalTitle: {
+    fontSize: 24,
+    color: "#fff",
+    marginBottom: 20,
   },
 });
 

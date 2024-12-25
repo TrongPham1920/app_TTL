@@ -7,9 +7,11 @@ const useHotModal = ({ route }) => {
   const { hotelId, date, user } = route.params;
 
   const [list, setList] = useState([]);
-  const [loading, setLoading] = useState(false);
   const [selectedRooms, setSelectedRooms] = useState([]);
   const [selectedKey, setSelectedKey] = useState([]);
+
+  const [loading, setLoading] = useState(false);
+  const [showDateModal, setShowDateModal] = useState(false);
 
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(20);
@@ -63,6 +65,14 @@ const useHotModal = ({ route }) => {
     navigation.navigate("Payment", { hotelId, selectedKey, date, user });
   };
 
+  const handleOpenDateModal = () => {
+    setShowDateModal(true);
+  };
+
+  const handleCloseDateModal = () => {
+    setShowDateModal(false);
+  };
+
   useEffect(() => {
     const newFilter = {
       ...filterParams,
@@ -83,10 +93,14 @@ const useHotModal = ({ route }) => {
     hotelId,
     date,
     user,
+    showDateModal,
+    setShowDateModal,
     handleBookNow,
     calculateTotalPrice,
     handleCheckboxChange,
     handleRoomPress,
+    handleCloseDateModal,
+    handleOpenDateModal,
   };
 };
 
