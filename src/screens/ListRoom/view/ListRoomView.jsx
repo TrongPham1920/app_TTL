@@ -2,6 +2,7 @@ import { useRoute } from "@react-navigation/native";
 import React from "react";
 import {
   ActivityIndicator,
+  Button,
   FlatList,
   Image,
   StyleSheet,
@@ -12,8 +13,8 @@ import {
 import { CheckBox } from "react-native-elements";
 import Icon from "react-native-vector-icons/FontAwesome";
 import FormatUtils from "../../../../utils/format/Format";
-import useListRoomModal from "../viewmodal/ListRoomModal";
 import Null from "../../../components/foundation/nodata/Null";
+import useListRoomModal from "../viewmodal/ListRoomModal";
 
 const getRoomType = (type) => {
   switch (type) {
@@ -37,6 +38,9 @@ const ListRoomView = () => {
     selectedKey,
     selectedRooms,
     loading,
+    hotelId,
+    date,
+    user,
     handleBookNow,
     calculateTotalPrice,
     handleCheckboxChange,
@@ -52,7 +56,18 @@ const ListRoomView = () => {
   }
 
   if (!list || list.length === 0) {
-    return <Null title="Ngày bạn chọn không khả dụng hãy chọn ngày khác" />;
+    return (
+      <>
+        <Null
+          title={`${date?.fromDate} -- ${date?.toDate} `}
+          content="Ngày bạn chọn không khả dụng hãy chọn ngày khác"
+          button={{
+            label: "Thử lại",
+            onPress: () => alert("Button được nhấn!"),
+          }}
+        />
+      </>
+    );
   }
 
   return (
