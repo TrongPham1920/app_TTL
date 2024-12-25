@@ -1,18 +1,21 @@
-import React, { useEffect, useState } from "react";
+import { useRoute } from "@react-navigation/native";
+import React from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
+  ActivityIndicator,
+  Button,
   FlatList,
   Image,
+  StyleSheet,
+  Text,
   TouchableOpacity,
-  ActivityIndicator,
+  View,
+  Modal,
 } from "react-native";
 import { CheckBox } from "react-native-elements";
-import { useNavigation, useRoute } from "@react-navigation/native";
-import { getroom } from "../../../api/app/app";
-import FormatUtils from "../../../../utils/format/Format";
 import Icon from "react-native-vector-icons/FontAwesome";
+import FormatUtils from "../../../../utils/format/Format";
+import Null from "../../../components/foundation/nodata/Null";
+import useListRoomModal from "../viewmodal/ListRoomModal";
 
 const getRoomType = (type) => {
   switch (type) {
@@ -31,68 +34,42 @@ const getRoomType = (type) => {
 
 const ListRoomView = () => {
   const route = useRoute();
-  const navigation = useNavigation();
-  const { hotelId, date, user } = route.params;
-
-  const [list, setList] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [selectedRooms, setSelectedRooms] = useState([]);
-  const [selectedKey, setSelectedKey] = useState([]);
-
-  const handleRoomPress = (roomId) => {
-    navigation.navigate("RoomDetail", { roomId });
-  };
-
-  const handleCheckboxChange = (roomId, price) => {
-    setSelectedRooms((prev) => {
-      const existingRoom = prev.find((room) => room.id === roomId);
-      if (existingRoom) {
-        return prev.filter((room) => room.id !== roomId);
-      } else {
-        return [...prev, { id: roomId, price }];
-      }
-    });
-    setSelectedKey((prev) => {
-      if (prev.includes(roomId)) {
-        return prev.filter((id) => id !== roomId);
-      } else {
-        return [...prev, roomId];
-      }
-    });
-  };
-
-  const calculateTotalPrice = () => {
-    return selectedRooms.reduce((total, room) => total + room?.price, 0);
-  };
-
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      const response = await getroom({ accommodationId: hotelId });
-      if (response?.data) {
-        setList(response.data);
-      }
-    } catch (error) {
-      console.error("Lỗi khi lấy dữ liệu room: ", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleBookNow = () => {
-    navigation.navigate("Payment", { hotelId, selectedKey, date, user });
-  };
-
-  useEffect(() => {
-    setSelectedRooms([]);
-    fetchData();
-  }, [hotelId]);
+  const {
+    list,
+    selectedKey,
+    selectedRooms,
+    loading,
+    hotelId,
+    date,
+    user,
+    handleBookNow,
+    calculateTotalPrice,
+    handleCheckboxChange,
+    handleRoomPress,
+    handleCloseDateModal,
+    handleOpenDateModal,
+  } = useListRoomModal({ route });
 
   if (loading) {
     return (
       <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
         <ActivityIndicator size="large" color="#6200ea" />
       </View>
+    );
+  }
+
+  if (!list || list.length === 0) {
+    return (
+      <>
+        <Null
+          title={`${date?.fromDate} -- ${date?.toDate} `}
+          content="Ngày bạn chọn không khả dụng hãy chọn ngày khác"
+          button={{
+            label: "Chọn ngày",
+            onPress: handleOpenDateModal,
+          }}
+        />
+      </>
     );
   }
 
@@ -173,6 +150,20 @@ const ListRoomView = () => {
           <Text style={styles.bookNowText}>Đặt ngay</Text>
         </TouchableOpacity>
       </View>
+
+      {showDateModal && (
+        <Modal
+          visible={showDateModal}
+          animationType="slide"
+          transparent={true}
+          onRequestClose={handleCloseDateModal}
+        >
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Chọn ngày</Text>
+            <Button title="Đóng" onPress={handleCloseDateModal} />
+          </View>
+        </Modal>
+      )}
     </View>
   );
 };
@@ -293,6 +284,17 @@ const styles = StyleSheet.create({
     color: "#fff",
     fontSize: 16,
     fontWeight: "bold",
+  },
+  modalContent: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+  },
+  modalTitle: {
+    fontSize: 24,
+    color: "#fff",
+    marginBottom: 20,
   },
 });
 

@@ -20,6 +20,7 @@ const DetailOrder = () => {
   const { detail, loading, onOk } = useOrderDetailModal({ id });
 
   const [isModalVisible, setModalVisible] = useState(false);
+
   const handleCancelOrder = () => {
     setModalVisible(false); // Đóng modal
     onOk(); // Gọi hàm hủy đơn

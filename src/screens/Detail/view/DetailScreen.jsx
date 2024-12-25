@@ -4,19 +4,20 @@ import { LinearGradient } from "expo-linear-gradient";
 import React, { useState } from "react";
 import {
   ActivityIndicator,
+  Modal,
   ScrollView,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
-  Modal,
 } from "react-native";
+import Toast from "react-native-toast-message";
 import FormatUtils from "../../../../utils/format/Format";
+import DateInput from "../../../components/foundation/date/Date";
 import SimpleCarousel from "../../../components/foundation/image/Carousel";
 import LocationMapWithThumbnail from "../../../components/foundation/map/LocaltionMapThumbnail";
 import DetailModal from "../viewmodal/DetailModal";
-import DateInput from "../../../components/foundation/date/Date";
-import Toast from "react-native-toast-message";
+
 const tagColors = [
   "#F2D5DA",
   "#BFBFE3",
