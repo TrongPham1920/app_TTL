@@ -2,6 +2,7 @@ import React from "react";
 import { StyleSheet, View, Text, Image } from "react-native";
 import OrderList from "../../../components/foundation/list/OrderList";
 import useHotModal from "../viewmodal/OrderModal";
+import Null from "../../../components/foundation/nodata/Null";
 
 const OrderScreen = ({ navigation }) => {
   const { accommodationData, loading } = useHotModal();
@@ -15,13 +16,7 @@ const OrderScreen = ({ navigation }) => {
           navigation={navigation}
         />
       ) : (
-        <View style={styles.noDataContainer}>
-          <Text style={styles.noDataText}>Chưa có đơn</Text>
-          <Image
-            source={require("../../../../assets/NoOrder.png")}
-            style={styles.noDataImage}
-          />
-        </View>
+        <Null />
       )}
     </View>
   );

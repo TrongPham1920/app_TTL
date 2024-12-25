@@ -13,6 +13,7 @@ import { CheckBox } from "react-native-elements";
 import Icon from "react-native-vector-icons/FontAwesome";
 import FormatUtils from "../../../../utils/format/Format";
 import useListRoomModal from "../viewmodal/ListRoomModal";
+import Null from "../../../components/foundation/nodata/Null";
 
 const getRoomType = (type) => {
   switch (type) {
@@ -48,6 +49,10 @@ const ListRoomView = () => {
         <ActivityIndicator size="large" color="#6200ea" />
       </View>
     );
+  }
+
+  if (!list || list.length === 0) {
+    return <Null title="Ngày bạn chọn không khả dụng hãy chọn ngày khác" />;
   }
 
   return (
