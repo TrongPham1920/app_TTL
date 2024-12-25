@@ -32,15 +32,20 @@ const useHotModal = () => {
   };
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener("focus", () => {
-      if (!loading && !profile) {
+    const handleFocus = () => {
+      if (!profile) {
         navigation.navigate("Login");
-      } else {
+      } else if (profile) {
         fetchData(filterParams);
       }
-    });
-    return unsubscribe;
-  }, [loading, profile, navigation]);
+    };
+
+    const unsubscribe = navigation.addListener("focus", handleFocus);
+
+    return () => {
+      unsubscribe();
+    };
+  }, [profile, navigation]);
 
   return { accommodationData, loading };
 };
