@@ -2,18 +2,18 @@ import { useRoute } from "@react-navigation/native";
 import React from "react";
 import {
   ActivityIndicator,
-  Button,
   FlatList,
   Image,
+  Modal,
   StyleSheet,
   Text,
   TouchableOpacity,
   View,
-  Modal,
 } from "react-native";
 import { CheckBox } from "react-native-elements";
 import Icon from "react-native-vector-icons/FontAwesome";
 import FormatUtils from "../../../../utils/format/Format";
+import DateInput from "../../../components/foundation/date/Date";
 import Null from "../../../components/foundation/nodata/Null";
 import useListRoomModal from "../viewmodal/ListRoomModal";
 
@@ -39,15 +39,24 @@ const ListRoomView = () => {
     selectedKey,
     selectedRooms,
     loading,
+    params,
     hotelId,
     date,
     user,
+    fromDate,
+    toDate,
+    setToDate,
+    setFromDate,
+    showDateModal,
+    setParams,
+    setShowDateModal,
     handleBookNow,
     calculateTotalPrice,
     handleCheckboxChange,
     handleRoomPress,
     handleCloseDateModal,
     handleOpenDateModal,
+    handleDateSelection,
   } = useListRoomModal({ route });
 
   if (loading) {
@@ -69,6 +78,80 @@ const ListRoomView = () => {
             onPress: handleOpenDateModal,
           }}
         />
+        {showDateModal && (
+          <Modal
+            visible={showDateModal}
+            animationType="slide"
+            transparent={true}
+            onRequestClose={handleCloseDateModal}
+          >
+            <View style={{ backgroundColor: "rgba(0, 0, 0, 0.5)", flex: 1 }}>
+              <View style={styles.datePickerContainer}>
+                <Text style={styles.modalTitle}>
+                  Chọn thời gian nhận/trả phòng
+                </Text>
+                <View style={styles.inputWrapper}>
+                  <DateInput
+                    label="Ngày nhận phòng"
+                    date={fromDate}
+                    onDateChange={setFromDate}
+                  />
+                </View>
+
+                <View style={styles.inputWrapper}>
+                  <DateInput
+                    label="Ngày trả phòng"
+                    date={toDate}
+                    onDateChange={setToDate}
+                  />
+                </View>
+                <View style={styles.button}>
+                  <TouchableOpacity
+                    style={styles.confirmButton}
+                    onPress={() => {
+                      const today = new Date();
+                      today.setHours(0, 0, 0, 0);
+
+                      if (!fromDate || !toDate) {
+                        Toast.show({
+                          position: "top",
+                          type: "error",
+                          text1: "Lỗi chọn ngày",
+                          text2:
+                            "Vui lòng chọn ngày nhận phòng và ngày trả phòng!",
+                        });
+                      } else if (fromDate < today) {
+                        Toast.show({
+                          type: "error",
+                          text1: "Lỗi chọn ngày",
+                          text2: "Ngày nhận phòng không được nhỏ hơn hôm nay!",
+                        });
+                      } else if (toDate <= fromDate) {
+                        Toast.show({
+                          type: "error",
+                          text1: "Lỗi chọn ngày",
+                          text2: "Ngày trả phòng phải lớn hơn ngày nhận phòng!",
+                        });
+                      } else {
+                        handleDateSelection(fromDate, toDate);
+                      }
+                    }}
+                  >
+                    <Text style={styles.confirmButtonText}>Xác nhận</Text>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.cancelButton}
+                    onPress={() => {
+                      setShowDateModal(false);
+                    }}
+                  >
+                    <Text style={styles.confirmButtonText}>Hủy</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+          </Modal>
+        )}
       </>
     );
   }
@@ -150,20 +233,6 @@ const ListRoomView = () => {
           <Text style={styles.bookNowText}>Đặt ngay</Text>
         </TouchableOpacity>
       </View>
-
-      {showDateModal && (
-        <Modal
-          visible={showDateModal}
-          animationType="slide"
-          transparent={true}
-          onRequestClose={handleCloseDateModal}
-        >
-          <View style={styles.modalContent}>
-            <Text style={styles.modalTitle}>Chọn ngày</Text>
-            <Button title="Đóng" onPress={handleCloseDateModal} />
-          </View>
-        </Modal>
-      )}
     </View>
   );
 };
@@ -171,21 +240,18 @@ const ListRoomView = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#fff",
+    backgroundColor: "#F5F5F5", // Màu nền sáng hơn
     paddingBottom: 60,
   },
   roomCard: {
-    position: "relative",
-    flexDirection: "column",
-    padding: 10,
-    marginBottom: 10,
-    backgroundColor: "#fffefc",
+    backgroundColor: "#FFFFFF", // Màu trắng sạch hơn
     borderRadius: 10,
     elevation: 3,
+    padding: 15,
+    marginBottom: 15,
     marginHorizontal: 20,
   },
   roomCardTouchable: {
-    position: "relative",
     marginBottom: 10,
   },
   header: {
@@ -197,6 +263,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 200,
     borderRadius: 10,
+    marginVertical: 10,
   },
   roomInfo: {
     flexDirection: "row",
@@ -213,49 +280,31 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "500",
     marginLeft: 5,
+    color: "#333", // Văn bản đậm hơn
   },
   roomName: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#57370D",
-  },
-  roomInfoRow: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
-    marginHorizontal: 10,
-    marginVertical: 5,
-  },
-  people: {
-    flexDirection: "row",
-    fontSize: 16,
-    fontWeight: "500",
-    marginVertical: 5,
+    color: "#2C3E50", // Màu sắc chuyên nghiệp
   },
   roomType: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "600",
     fontStyle: "italic",
-    marginBottom: 5,
+    color: "#7F8C8D", // Màu sắc nhấn nhá
   },
   roomPrice: {
     textAlign: "right",
     fontSize: 20,
     fontWeight: "800",
-    color: "#bd0d0d",
+    color: "#E74C3C", // Màu đỏ nổi bật
   },
-  quantityContainer: {
+  people: {
     flexDirection: "row",
     alignItems: "center",
-  },
-  quantityInput: {
-    width: 50,
-    height: 30,
-    borderColor: "#ccc",
-    borderWidth: 1,
-    textAlign: "center",
     fontSize: 16,
-    marginLeft: 10,
+    fontWeight: "500",
+    color: "#34495E",
   },
   footerContainer: {
     flexDirection: "row",
@@ -263,38 +312,64 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     padding: 15,
     borderTopWidth: 1,
-    borderColor: "#ddd",
-    backgroundColor: "#f9f9f9",
+    borderColor: "#ECECEC",
+    backgroundColor: "#FAFAFA",
   },
   totalPriceText: {
     fontSize: 18,
     fontWeight: "bold",
-    color: "#000",
+    color: "#2C3E50",
   },
   bookNowButton: {
-    backgroundColor: "#004E9A",
-    paddingVertical: 10,
+    backgroundColor: "#2980B9",
+    paddingVertical: 12,
     paddingHorizontal: 20,
-    borderRadius: 5,
+    borderRadius: 8,
   },
   disabledButton: {
-    backgroundColor: "#ccc",
+    backgroundColor: "#BDC3C7",
   },
   bookNowText: {
-    color: "#fff",
+    color: "#FFFFFF",
     fontSize: 16,
     fontWeight: "bold",
   },
-  modalContent: {
-    flex: 1,
-    justifyContent: "center",
+  datePickerContainer: {
+    backgroundColor: "#FFFFFF",
+    borderRadius: 10,
+    padding: 20,
+    marginHorizontal: 20,
+    marginVertical: 100,
     alignItems: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)",
   },
   modalTitle: {
-    fontSize: 24,
-    color: "#fff",
-    marginBottom: 20,
+    fontSize: 20,
+    fontWeight: "600",
+    color: "#34495E",
+    marginBottom: 15,
+  },
+  inputWrapper: {
+    width: "100%",
+    marginVertical: 10,
+  },
+  confirmButton: {
+    backgroundColor: "#27AE60",
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+  },
+  cancelButton: {
+    backgroundColor: "#E74C3C",
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    marginTop: 10,
+  },
+  confirmButtonText: {
+    color: "#FFFFFF",
+    fontSize: 16,
+    fontWeight: "600",
+    textAlign: "center",
   },
 });
 

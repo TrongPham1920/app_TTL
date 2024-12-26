@@ -24,6 +24,8 @@ const usePaymentModal = ({ route }) => {
   const checkInDate = fromDate;
   const checkOutDate = toDate;
 
+  console.log({ hotelId, selectedKey, date, user });
+
   useEffect(() => {
     if (user) {
       const url = `https://img.vietqr.io/image/${user?.bankShortName}-${user?.accountNumber}-compact.jpg?amount=100000&addInfo=Chuyen khoan dat phong - ${hotelId}`;
@@ -110,7 +112,7 @@ const usePaymentModal = ({ route }) => {
   };
 
   const handleCancel = () => {
-    navigation.goBack();
+    navigation.navigate("Home");
   };
 
   const downloadImageToGallery = async (url, fileName) => {
