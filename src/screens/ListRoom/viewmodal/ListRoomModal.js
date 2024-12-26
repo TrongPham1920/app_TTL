@@ -1,14 +1,24 @@
 import { useNavigation } from "@react-navigation/native";
 import { useEffect, useState } from "react";
 import { getroom } from "../../../api/app/app.js";
+import dayjs from "dayjs";
+import customParseFormat from "dayjs/plugin/customParseFormat";
+
+dayjs.extend(customParseFormat);
 
 const useHotModal = ({ route }) => {
   const navigation = useNavigation();
-  const { hotelId, date, user } = route.params;
+
+  const [params, setParams] = useState(route.params);
+
+  const { hotelId, date, user } = params;
 
   const [list, setList] = useState([]);
   const [selectedRooms, setSelectedRooms] = useState([]);
   const [selectedKey, setSelectedKey] = useState([]);
+
+  const [toDate, setToDate] = useState([]);
+  const [fromDate, setFromDate] = useState([]);
 
   const [loading, setLoading] = useState(false);
   const [showDateModal, setShowDateModal] = useState(false);
@@ -73,27 +83,61 @@ const useHotModal = ({ route }) => {
     setShowDateModal(false);
   };
 
+  const handleDateSelection = (fromDate, toDate) => {
+    const formattedFromDate = dayjs(fromDate).format("DD/MM/YYYY");
+    const formattedToDate = dayjs(toDate).format("DD/MM/YYYY");
+
+    setParams((prev) => ({
+      ...prev,
+      ...route.params,
+      date: {
+        fromDate: formattedFromDate,
+        toDate: formattedToDate,
+      },
+    }));
+    setShowDateModal(false);
+  };
+
   useEffect(() => {
+    const formattedFromDate = dayjs(date.fromDate, "DD/MM/YYYY").toDate();
+    const formattedToDate = dayjs(date.toDate, "DD/MM/YYYY").toDate();
+    setFromDate(formattedFromDate);
+    setToDate(formattedToDate);
+
     const newFilter = {
       ...filterParams,
       accommodationId: hotelId,
       fromDate: date.fromDate,
       toDate: date.toDate,
     };
+
     setSelectedKey([]);
     setSelectedRooms([]);
     fetchData(newFilter);
-  }, [hotelId, date, user]);
+  }, [params]);
+
+  useEffect(() => {
+    setParams((prev) => ({
+      ...prev,
+      ...route.params,
+    }));
+  }, [route.params]);
 
   return {
     list,
     selectedKey,
     selectedRooms,
     loading,
+    params,
     hotelId,
     date,
     user,
     showDateModal,
+    fromDate,
+    toDate,
+    setToDate,
+    setFromDate,
+    setParams,
     setShowDateModal,
     handleBookNow,
     calculateTotalPrice,
@@ -101,6 +145,7 @@ const useHotModal = ({ route }) => {
     handleRoomPress,
     handleCloseDateModal,
     handleOpenDateModal,
+    handleDateSelection,
   };
 };
 
