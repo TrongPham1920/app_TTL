@@ -15,7 +15,6 @@ api.interceptors.request.use(
       const cleanedToken = accessToken.replace(/^"(.*)"$/, "$1");
       config.headers["Authorization"] = `Bearer ${cleanedToken}`;
     } else {
-      console.log("Access token không hợp lệ hoặc không tồn tại.");
     }
     return config;
   },

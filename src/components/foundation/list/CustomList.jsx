@@ -1,11 +1,11 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { StyleSheet, View } from "react-native";
 import AccommodationCard from "../../../components/foundation/card/AccommodationCard";
 import Loading from "../../../components/foundation/loading/Loading";
 import { useNavigation } from "@react-navigation/native";
 import { FlashList } from "@shopify/flash-list";
 
-const CustomList = ({ data, loading, onEndReached, date }) => {
+const CustomList = ({ data, loading, onEndReached, date, hasMore }) => {
   const navigation = useNavigation();
   const renderItem = ({ item }) => (
     <AccommodationCard
@@ -16,7 +16,13 @@ const CustomList = ({ data, loading, onEndReached, date }) => {
 
   const keyExtractor = (item) => item.id.toString();
 
-  if (loading) return <Loading />;
+  const handleEndReached = useCallback(() => {
+    if (!loading && hasMore) {
+      onEndReached(); // Gọi callback để tải thêm dữ liệu
+    }
+  }, [loading, hasMore, onEndReached]);
+
+  if (loading && data.length === 0) return <Loading />;
 
   return (
     <View style={styles.container}>
@@ -26,9 +32,9 @@ const CustomList = ({ data, loading, onEndReached, date }) => {
         keyExtractor={keyExtractor}
         contentContainerStyle={styles.listContent}
         ItemSeparatorComponent={() => <View style={styles.separator} />}
-        ListFooterComponent={<View style={styles.footer} />}
-        onEndReached={onEndReached}
-        onEndReachedThreshold={0.9}
+        ListFooterComponent={loading && <Loading />}
+        onEndReached={handleEndReached} // Sự kiện cuộn đến cuối
+        onEndReachedThreshold={0.9} // Ngưỡng khi cuộn đến cuối
         estimatedItemSize={200}
       />
     </View>

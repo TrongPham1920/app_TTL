@@ -19,34 +19,18 @@ const useHotModal = () => {
   const [villaLoading, setVillaLoading] = useState(true);
 
   const [page, setPage] = useState(0);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(20);
+
+  const [dates, setDates] = useState({
+    fromDate: date,
+    toDate: StartDate,
+  });
 
   const [filterParams, setFilterParams] = useState({
     page: page,
     limit: pageSize,
-    fromDate: date,
-    toDate: StartDate,
-  });
-
-  const [hotelParams, setHotelParams] = useState({
-    limit: pageSize,
-    fromDate: date,
-    toDate: StartDate,
-    type: 0,
-  });
-
-  const [homestayParams, setHomestayParams] = useState({
-    limit: pageSize,
-    fromDate: date,
-    toDate: StartDate,
-    type: 1,
-  });
-
-  const [villaParams, setVillaParams] = useState({
-    limit: pageSize,
-    fromDate: date,
-    toDate: StartDate,
-    type: 2,
+    fromDate: dates.fromDate,
+    toDate: dates.toDate,
   });
 
   const fetchData = async (filterParams) => {
@@ -63,10 +47,14 @@ const useHotModal = () => {
     }
   };
 
-  const hotelData = async (hotelParams) => {
+  const hotelData = async (filterParams) => {
     try {
       setHotelLoading(true);
-      const response = await accommodationuser(hotelParams);
+      const praram = {
+        ...filterParams,
+        type: 0,
+      };
+      const response = await accommodationuser(praram);
       if (response?.data) {
         setHotels(response.data);
       }
@@ -77,10 +65,14 @@ const useHotModal = () => {
     }
   };
 
-  const homestayData = async (homestayParams) => {
+  const homestayData = async (filterParams) => {
     try {
       setHomestayLoading(true);
-      const response = await accommodationuser(homestayParams);
+      const praram = {
+        ...filterParams,
+        type: 1,
+      };
+      const response = await accommodationuser(praram);
       if (response?.data) {
         setHomestay(response.data);
       }
@@ -91,10 +83,14 @@ const useHotModal = () => {
     }
   };
 
-  const villaData = async (villaParams) => {
+  const villaData = async (filterParams) => {
     try {
       setVillaLoading(true);
-      const response = await accommodationuser(villaParams);
+      const praram = {
+        ...filterParams,
+        type: 2,
+      };
+      const response = await accommodationuser(praram);
       if (response?.data) {
         setVilla(response.data);
       }
@@ -105,16 +101,37 @@ const useHotModal = () => {
     }
   };
 
+  const onDateChange = (value, name) => {
+    if (name === "endDate") {
+      setFilterParams({
+        ...filterParams,
+        toDate: value,
+      });
+      const newDates = { ...dates, toDate: value };
+      setDates(newDates);
+    } else {
+      setFilterParams({
+        ...filterParams,
+        fromDate: value,
+      });
+      const newDates = { ...dates, fromDate: value };
+      setDates(newDates);
+    }
+  };
+
   useEffect(() => {
     fetchData(filterParams);
-    hotelData(hotelParams);
-    homestayData(homestayParams);
-    villaData(villaParams);
-  }, [filterParams, hotelParams, homestayParams, villaParams]);
+    hotelData(filterParams);
+    homestayData(filterParams);
+    villaData(filterParams);
+  }, [filterParams]);
 
   return {
+    dates,
     date,
     StartDate,
+    currentDate,
+    defaultStartDate,
     list,
     generalLoading,
     villa,
@@ -123,6 +140,7 @@ const useHotModal = () => {
     hotelLoading,
     homestayLoading,
     villaLoading,
+    onDateChange,
   };
 };
 

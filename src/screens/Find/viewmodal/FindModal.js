@@ -7,6 +7,7 @@ const FindModal = ({ route }) => {
 
   const [inputValue, setInputValue] = useState("");
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
 
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(20);
@@ -19,12 +20,19 @@ const FindModal = ({ route }) => {
   const [toDate, setToDate] = useState("");
   const [fromDate, setFromdate] = useState("");
 
-  const fetchData = async (filterParams) => {
+  const fetchData = async (filterParams, reset) => {
     try {
       setLoading(true);
+
       const response = await accommodationuser(filterParams);
       if (response?.data) {
-        setAccommodationData(response.data);
+        console.log(reset);
+        if (reset !== true) {
+          setAccommodationData(response.data);
+        } else {
+          setAccommodationData((prevData) => [...prevData, ...response.data]);
+        }
+        setHasMore(response.data.length === pageSize);
       }
     } catch (error) {
       console.error("Lỗi khi lấy dữ liệu accommodation: ", error);
@@ -40,8 +48,9 @@ const FindModal = ({ route }) => {
         page: 0,
         ...route?.params,
       };
-
-      fetchData(updatedParams);
+      setFilterParams(updatedParams);
+      setLoading(true);
+      fetchData(updatedParams, false);
       setFromdate(route?.params?.fromDate);
       setToDate(route?.params?.toDate);
     }
@@ -49,6 +58,7 @@ const FindModal = ({ route }) => {
 
   const handleSearch = () => {
     const trimmedValue = inputValue.trim();
+    setLoading(true);
 
     if (trimmedValue) {
       const updatedParams = {
@@ -59,7 +69,8 @@ const FindModal = ({ route }) => {
         toDate: toDate,
       };
 
-      fetchData(updatedParams);
+      fetchData(updatedParams, false);
+      setFilterParams(updatedParams);
     } else {
       const updatedParams = {
         limit: 20,
@@ -68,29 +79,29 @@ const FindModal = ({ route }) => {
         toDate: toDate,
       };
 
-      fetchData(updatedParams);
+      fetchData(updatedParams, false);
+      setFilterParams(updatedParams);
     }
   };
 
-  const toggleModal = () => {
-    setIsModalVisible(!isModalVisible);
-  };
-
   const onOK = (info) => {
+    setLoading(true);
     const updatedParams = {
       ...filterParams,
       page: 0,
       ...info,
+      fromDate: fromDate,
+      toDate: toDate,
     };
 
-    fetchData(updatedParams);
+    setFilterParams(updatedParams);
+    fetchData(updatedParams, false);
   };
 
   const handleEndReached = () => {
     if (
-      loading ||
-      accommodationData.length === 0 ||
-      accommodationData.length < pageSize
+      loading || // Nếu đang tải dữ liệu
+      !hasMore // Nếu không còn dữ liệu để tải
     ) {
       return;
     }
@@ -99,14 +110,23 @@ const FindModal = ({ route }) => {
 
     const updatedParams = {
       ...filterParams,
-      page: page + 1,
+      page: page + 1, // Cập nhật trang để tải thêm
     };
-
-    fetchData(updatedParams);
+    setFilterParams(updatedParams);
+    fetchData(updatedParams, true);
   };
+
+  const toggleModal = () => {
+    setIsModalVisible(!isModalVisible);
+  };
+
+  useEffect(() => {
+    console.log(filterParams);
+  }, [filterParams]);
 
   return {
     accommodationData,
+    hasMore,
     loading,
     isModalVisible,
     inputValue,

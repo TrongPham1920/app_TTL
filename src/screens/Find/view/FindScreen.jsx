@@ -15,6 +15,7 @@ import FilterModal from "./modal/FilterModal";
 const FindScreen = ({ route }) => {
   const {
     accommodationData,
+    hasMore,
     loading,
     isModalVisible,
     inputValue,
@@ -55,6 +56,7 @@ const FindScreen = ({ route }) => {
         data={accommodationData}
         onEndReached={handleEndReached}
         date={dates}
+        hasMore={hasMore}
       />
 
       {isModalVisible && (
