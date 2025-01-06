@@ -1,11 +1,12 @@
-import React, { useState } from "react";
-import { View, StyleSheet, Text } from "react-native";
 import DateTimePicker from "@react-native-community/datetimepicker";
+import dayjs from "dayjs";
+import React, { useState } from "react";
+import { StyleSheet, Text, View } from "react-native";
 
 const DateInput = ({ label, date, onDateChange }) => {
   const [show, setShow] = useState(false);
 
-  const currentDate = date instanceof Date ? date : new Date();
+  const currentDate = dayjs(date).isValid() ? dayjs(date) : dayjs();
 
   const onChange = (event, selectedDate) => {
     const selected = selectedDate || currentDate;
@@ -22,11 +23,11 @@ const DateInput = ({ label, date, onDateChange }) => {
         style={styles.input}
         onPress={() => setShow(true)} // Show the date picker when clicked
       >
-        {currentDate.toLocaleDateString()}
+        {currentDate.format("DD/MM/YYYY")}
       </Text>
       {show && (
         <DateTimePicker
-          value={currentDate}
+          value={currentDate.toDate()}
           mode="date"
           display="default"
           onChange={onChange}

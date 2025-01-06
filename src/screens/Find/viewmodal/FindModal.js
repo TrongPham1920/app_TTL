@@ -7,6 +7,7 @@ const FindModal = ({ route }) => {
 
   const [inputValue, setInputValue] = useState("");
   const [isModalVisible, setIsModalVisible] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
 
   const [page, setPage] = useState(0);
   const [pageSize, setPageSize] = useState(20);
@@ -24,7 +25,8 @@ const FindModal = ({ route }) => {
       setLoading(true);
       const response = await accommodationuser(filterParams);
       if (response?.data) {
-        setAccommodationData(response.data);
+        setAccommodationData((prevData) => [...prevData, ...response.data]);
+        setHasMore(response.data.length === pageSize);
       }
     } catch (error) {
       console.error("Lỗi khi lấy dữ liệu accommodation: ", error);
@@ -88,9 +90,8 @@ const FindModal = ({ route }) => {
 
   const handleEndReached = () => {
     if (
-      loading ||
-      accommodationData.length === 0 ||
-      accommodationData.length < pageSize
+      loading || // Nếu đang tải dữ liệu
+      !hasMore // Nếu không còn dữ liệu để tải
     ) {
       return;
     }
@@ -99,7 +100,7 @@ const FindModal = ({ route }) => {
 
     const updatedParams = {
       ...filterParams,
-      page: page + 1,
+      page: page + 1, // Cập nhật trang để tải thêm
     };
 
     fetchData(updatedParams);
@@ -107,6 +108,7 @@ const FindModal = ({ route }) => {
 
   return {
     accommodationData,
+    hasMore,
     loading,
     isModalVisible,
     inputValue,

@@ -12,12 +12,12 @@ import EvilIcons from "@expo/vector-icons/EvilIcons";
 import HorizontalList from "../../../components/foundation/list/HorizontalList";
 import useHomeModal from "../viewmodal/HomeModal";
 import { useNavigation } from "@react-navigation/native";
+import DateInput from "../../../components/foundation/date/DateHome";
 
 const HomeScreen = () => {
   const navigation = useNavigation();
   const {
-    date,
-    StartDate,
+    dates,
     list,
     generalLoading,
     villa,
@@ -26,19 +26,28 @@ const HomeScreen = () => {
     hotelLoading,
     homestayLoading,
     villaLoading,
+    onDateChange,
   } = useHomeModal();
 
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.listContent}>
+        <View style={styles.inputWrapper}>
+          <DateInput
+            title="Ngày đặt phòng"
+            startDate={dates.fromDate}
+            endDate={dates.toDate}
+            onDateChange={onDateChange}
+          />
+        </View>
         <View style={styles.boxHeader}>
           <TouchableOpacity
             style={styles.box}
             onPress={() => {
               navigation.navigate("Find", {
                 type: 0,
-                fromDate: date,
-                toDate: StartDate,
+                fromDate: dates.fromDate,
+                toDate: dates.toDate,
               });
             }}
           >
@@ -56,8 +65,8 @@ const HomeScreen = () => {
             onPress={() => {
               navigation.navigate("Find", {
                 type: 2,
-                fromDate: date,
-                toDate: StartDate,
+                fromDate: dates.fromDate,
+                toDate: dates.toDate,
               });
             }}
           >
@@ -75,8 +84,8 @@ const HomeScreen = () => {
             onPress={() => {
               navigation.navigate("Find", {
                 type: 1,
-                fromDate: date,
-                toDate: StartDate,
+                fromDate: dates.fromDate,
+                toDate: dates.toDate,
               });
             }}
           >
@@ -101,8 +110,8 @@ const HomeScreen = () => {
             onPress={() => {
               navigation.navigate("Find", {
                 province: "Hồ Chí Minh",
-                fromDate: date,
-                toDate: StartDate,
+                fromDate: dates.fromDate,
+                toDate: dates.toDate,
               });
             }}
           >
@@ -120,8 +129,8 @@ const HomeScreen = () => {
             onPress={() => {
               navigation.navigate("Find", {
                 province: "Đà Nẵng",
-                fromDate: date,
-                toDate: StartDate,
+                fromDate: dates.fromDate,
+                toDate: dates.toDate,
               });
             }}
           >
@@ -141,8 +150,8 @@ const HomeScreen = () => {
             onPress={() => {
               navigation.navigate("Find", {
                 province: "Đà Lạt",
-                fromDate: date,
-                toDate: StartDate,
+                fromDate: dates.fromDate,
+                toDate: dates.toDate,
               });
             }}
           >
@@ -160,8 +169,8 @@ const HomeScreen = () => {
             onPress={() => {
               navigation.navigate("Find", {
                 province: "Vũng Tàu",
-                fromDate: date,
-                toDate: StartDate,
+                fromDate: dates.fromDate,
+                toDate: dates.toDate,
               });
             }}
           >
@@ -190,7 +199,7 @@ const HomeScreen = () => {
           }
           type={-1}
           data={list}
-          date={{ fromDate: date, toDate: StartDate }}
+          date={{ fromDate: dates.fromDate, toDate: dates.toDate }}
           loading={generalLoading}
         />
 
@@ -204,7 +213,7 @@ const HomeScreen = () => {
           }
           type={0}
           data={hotels}
-          date={{ fromDate: date, toDate: StartDate }}
+          date={{ fromDate: dates.fromDate, toDate: dates.toDate }}
           loading={hotelLoading}
         />
 
@@ -218,7 +227,7 @@ const HomeScreen = () => {
           }
           type={1}
           data={homestay}
-          date={{ fromDate: date, toDate: StartDate }}
+          date={{ fromDate: dates.fromDate, toDate: dates.toDate }}
           loading={homestayLoading}
         />
 
@@ -232,7 +241,7 @@ const HomeScreen = () => {
           }
           type={2}
           data={villa}
-          date={{ fromDate: date, toDate: StartDate }}
+          date={{ fromDate: dates.fromDate, toDate: dates.toDate }}
           loading={villaLoading}
         />
       </ScrollView>
