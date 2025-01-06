@@ -34,7 +34,7 @@ const CustomList = ({ data, loading, onEndReached, date, hasMore }) => {
         ItemSeparatorComponent={() => <View style={styles.separator} />}
         ListFooterComponent={loading && <Loading />}
         onEndReached={handleEndReached} // Sự kiện cuộn đến cuối
-        onEndReachedThreshold={0.6} // Ngưỡng khi cuộn đến cuối
+        onEndReachedThreshold={0.9} // Ngưỡng khi cuộn đến cuối
         estimatedItemSize={200}
       />
     </View>
