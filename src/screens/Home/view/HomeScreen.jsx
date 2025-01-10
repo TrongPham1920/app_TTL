@@ -136,7 +136,7 @@ const HomeScreen = () => {
           >
             <Image
               source={{
-                uri: "https://res.cloudinary.com/dqipg0or3/image/upload/v1733220572/avatars/hpcedsoc4kmvryv9wxww.jpg",
+                uri: "https://res.cloudinary.com/dqipg0or3/image/upload/v1736306105/avatars/fn38tjh8gqoyksfivpa2.jpg",
               }}
               style={styles.image}
             />
