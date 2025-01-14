@@ -3,6 +3,7 @@ import { StyleSheet, View } from "react-native";
 import CustomList from "../../../components/foundation/list/CustomList";
 import useHotModal from "../viewmodal/HotModal";
 import DateInput from "../../../components/foundation/date/DateHome";
+
 const ShowAllScreen = ({ navigation }) => {
   const { accommodationData, loading, onDateChange, dates } = useHotModal();
 
@@ -20,6 +21,7 @@ const ShowAllScreen = ({ navigation }) => {
         loading={loading}
         data={accommodationData}
         navigation={navigation}
+        date={{ fromDate: dates.fromDate, toDate: dates.toDate }}
       />
     </View>
   );
@@ -28,7 +30,7 @@ const ShowAllScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 0,
+    paddingBottom: 30,
   },
 });
 

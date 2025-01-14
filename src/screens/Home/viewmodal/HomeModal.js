@@ -102,6 +102,7 @@ const useHotModal = () => {
   };
 
   const onDateChange = (value, name) => {
+    console.log(value, name);
     if (name === "endDate") {
       setFilterParams({
         ...filterParams,
@@ -124,7 +125,7 @@ const useHotModal = () => {
     hotelData(filterParams);
     homestayData(filterParams);
     villaData(filterParams);
-  }, [filterParams]);
+  }, [filterParams, dates]);
 
   return {
     dates,

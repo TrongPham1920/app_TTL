@@ -79,6 +79,7 @@ const styles = StyleSheet.create({
     paddingVertical: 5,
     paddingHorizontal: 10,
     backgroundColor: "white",
+    paddingBottom: 30,
   },
   searchRow: {
     flexDirection: "row",

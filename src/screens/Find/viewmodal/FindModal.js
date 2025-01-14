@@ -26,13 +26,17 @@ const FindModal = ({ route }) => {
 
       const response = await accommodationuser(filterParams);
       if (response?.data) {
-        console.log(reset);
         if (reset !== true) {
           setAccommodationData(response.data);
         } else {
           setAccommodationData((prevData) => [...prevData, ...response.data]);
         }
-        setHasMore(response.data.length === pageSize);
+
+        const total = response.pagination?.total || 0;
+        const fetchedDataLength = response.data.length;
+        const totalPages = Math.ceil(total / pageSize);
+
+        setHasMore(fetchedDataLength < total);
       }
     } catch (error) {
       console.error("Lỗi khi lấy dữ liệu accommodation: ", error);
@@ -99,10 +103,7 @@ const FindModal = ({ route }) => {
   };
 
   const handleEndReached = () => {
-    if (
-      loading || // Nếu đang tải dữ liệu
-      !hasMore // Nếu không còn dữ liệu để tải
-    ) {
+    if (loading || !hasMore) {
       return;
     }
 
@@ -110,8 +111,9 @@ const FindModal = ({ route }) => {
 
     const updatedParams = {
       ...filterParams,
-      page: page + 1, // Cập nhật trang để tải thêm
+      page: page + 1,
     };
+    setPage(page + 1);
     setFilterParams(updatedParams);
     fetchData(updatedParams, true);
   };

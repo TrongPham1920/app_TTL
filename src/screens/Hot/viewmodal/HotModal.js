@@ -39,6 +39,7 @@ const useHotModal = () => {
   };
 
   const onDateChange = (value, name) => {
+    console.log(value, name);
     if (name === "endDate") {
       setFilterParams({
         ...filterParams,
@@ -58,7 +59,7 @@ const useHotModal = () => {
 
   useEffect(() => {
     fetchData(filterParams);
-  }, [filterParams]);
+  }, [filterParams, dates]);
 
   return { accommodationData, loading, date, dates, onDateChange };
 };
